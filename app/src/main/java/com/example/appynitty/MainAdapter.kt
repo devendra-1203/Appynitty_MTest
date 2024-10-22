@@ -6,14 +6,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
-class MainAdapter(private var data1 : List<ImageData>)  : RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
+class MainAdapter(private var data : List<ImageData>)  : RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
+    private var fullDataList = data.toList()
 
     class MainViewHolder(val view : View): RecyclerView.ViewHolder(view) {
         fun bind(data: ImageData){
-            view.findViewById<TextView>(R.id.title).text = data.title
-            view.findViewById<TextView>(R.id.description).text = data.title
-           // view.findViewById<ImageView>(R.id.image_view). =data.image
+            view.findViewById<TextView>(R.id.title).text = "${data.title} ${data.firstName} ${data.lastName}"
+            view.findViewById<TextView>(R.id.description).text = data.id
+            Glide.with(view)
+                .load(data.picture)
+                .into(view.findViewById(R.id.ivProfile))
         }
 
     }
@@ -24,14 +28,28 @@ class MainAdapter(private var data1 : List<ImageData>)  : RecyclerView.Adapter<M
     }
 
     override fun onBindViewHolder(holder: MainAdapter.MainViewHolder, position: Int) {
-        holder.bind(data1[position])
+        holder.bind(data[position])
     }
 
-    override fun getItemCount(): Int = data1.size
+    override fun getItemCount(): Int = data.size
 
     fun addData(newdata : List<ImageData>){
-        data1 = data1 + newdata
+        data =  newdata
+        fullDataList = newdata.toList()
         notifyDataSetChanged()
+    }
+
+    fun filter(query : String){
+        data =if (query.isEmpty()){
+            fullDataList
+        }else{
+            fullDataList.filter {
+                it.firstName.contains(query,ignoreCase = true) ||
+                        it.lastName.contains(query,ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
+
     }
 }
 

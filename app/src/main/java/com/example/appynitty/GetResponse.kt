@@ -1,4 +1,9 @@
 package com.example.appynitty
 
-class GetResponse(val gets : List<ImageData>) {
-}
+data class GetResponse(val data: List<ImageData>,
+       val total :Int,
+       val page : Int,
+       val limit : Int
+
+
+)
